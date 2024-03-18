@@ -17,6 +17,7 @@ from Search_2D import plotting, env
 class AStar:
     """AStar set the cost + heuristics as the priority
     """
+    #构造一个类，这个类是A*算法的核心
     def __init__(self, s_start, s_goal, heuristic_type):
         self.s_start = s_start
         self.s_goal = s_goal
@@ -24,33 +25,39 @@ class AStar:
 
         self.Env = env.Env()  # class Env
 
-        self.u_set = self.Env.motions  # feasible input set
-        self.obs = self.Env.obs  # position of obstacles
+        self.u_set = self.Env.motions  # 这里是每个网格可移动的八个方向
+        self.obs = self.Env.obs  # 障碍物位置
 
-        self.OPEN = []  # priority queue / OPEN set
-        self.CLOSED = []  # CLOSED set / VISITED order
-        self.PARENT = dict()  # recorded parent
-        self.g = dict()  # cost to come
+        self.OPEN = []  # 开集、待检查的网格数组
+        self.CLOSED = []  # 闭集、已经检查的网格数组
+        self.PARENT = dict()  # 记录已检查网格数组的父节点
+        self.g = dict()  # 记录网格到起点和终点的距离之和
 
+    #这是一个搜索方法
     def searching(self):
         """
         A_star Searching.
         :return: path, visited order
         """
-
+        #记录父节点
         self.PARENT[self.s_start] = self.s_start
+        #记录到起点的距离
         self.g[self.s_start] = 0
+        #记录到目标点的距离
         self.g[self.s_goal] = math.inf
+        #在开集中记录起点和距离起点的距离，作为分析的第一步
         heapq.heappush(self.OPEN,
                        (self.f_value(self.s_start), self.s_start))
-
+        #当开集不为空时
         while self.OPEN:
+            #在开集中获取到f值最小的节点和它的f值。_是f值，s是节点
             _, s = heapq.heappop(self.OPEN)
+            #把获取到的f值最小的节点放到闭集里面
             self.CLOSED.append(s)
-
+            #如果这个节点是目标点，那么计算结束
             if s == self.s_goal:  # stop condition
                 break
-
+            
             for s_n in self.get_neighbor(s):
                 new_cost = self.g[s] + self.cost(s, s_n)
 
